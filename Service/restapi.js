@@ -3,12 +3,11 @@ const bodyParser = require('body-parser');
 const userdata = require('../Model/userdata.js');
 const biodata = require('../Model/biodata.js');
 const salarydata = require('../Model/salarydata.js');
-const cloudinary = require('cloudinary').v2
 const multer = require('multer');
 const path = require('path');
 
 
-let BADE_REQ_CODE = 400
+let BADE_REQ_CODE = 200
 let RESPONSE_VALIDE_CODE = 200
 
 const router = new express.Router();
@@ -17,14 +16,6 @@ router.use(express.json()) // important to json data from req.body
 router.use(bodyParser.json()); // support json encoded bodies
 router.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
-
-
-cloudinary.config({
-    cloud_name: process.env.CLOUD_NAME,
-    api_key: process.env.CLOUD_API_KEY,
-    api_secret: process.env.API_SECRET,
-
-})
 
 const storage = multer.diskStorage({
     destination: './uploads/', // Change this directory to your desired location
@@ -352,7 +343,6 @@ router.post('/addsalarydata', async (req, res) => {
         })
     }
 });
-
 
 
 module.exports = router

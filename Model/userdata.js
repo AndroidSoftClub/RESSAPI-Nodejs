@@ -11,6 +11,9 @@ const root = mongoose.Schema({
         "type": "String",
         required: [true, "App id is required"],
     },
+    "employee_profile": {
+        "type": "String",
+    },
     "created_at": {
         type: Number, required: true
     }

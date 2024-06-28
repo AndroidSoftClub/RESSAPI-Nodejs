@@ -4,6 +4,9 @@ const userdata = require('../Model/userdata.js');
 const biodata = require('../Model/biodata.js');
 const salarydata = require('../Model/salarydata.js');
 const cloudinary = require('cloudinary').v2
+const multer = require('multer');
+const path = require('path');
+
 
 let BADE_REQ_CODE = 400
 let RESPONSE_VALIDE_CODE = 200
@@ -15,6 +18,7 @@ router.use(bodyParser.json()); // support json encoded bodies
 router.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 
+
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
     api_key: process.env.CLOUD_API_KEY,
@@ -22,20 +26,72 @@ cloudinary.config({
 
 })
 
-router.post('/uploademployeeimage', async (req, res) => {
-    const result = await cloudinary.uploader.upload(req.file, res, function (err) {
-        if (err) {
-            console.log(err);
-            return res.send(err);
-        }
+const storage = multer.diskStorage({
+    destination: './uploads/', // Change this directory to your desired location
+    filename: function (req, file, cb) {
+        cb(null, (Date.now() / 1000) + '-' + file.originalname); // Create unique filename
+    }
+});
 
-        console.log(req.files); // An array of uploaded files from Cloudinary
-        res.status(RESPONSE_VALIDE_CODE).send({
-            status: true,
-            message: 'Upload successful',
-            data: req.files[0]
-        });
-    });
+const uploadbulkimages = multer({
+    storage: storage,
+    fileFilter: (req, file, cb) => {
+        const allowedExtensions = ['.png', '.jpg', '.jpeg'];
+        const extension = path.extname(file.originalname).toLowerCase();
+
+        if (allowedExtensions.includes(extension)) {
+            cb(null, true); // Valid extension
+        } else {
+            cb(new multer.MulterError('LIMIT_FILE_TYPE', 'Only PNG and JPG files are allowed.'));
+        }
+    }
+}).array('file', 1);;
+
+// const upload = multer({ storage: storage }); // Create Multer instance
+// const uploadbulkimages = multer({ storage: storage }).array('file', 1);
+
+router.post('/uploademployeeimage', async (req, res) => {
+    const userid = req.query.employee_number
+
+    const isUserExist = await userdata.findOne({ employee_number: userid })
+
+    console.log(isUserExist, userid)
+
+    if (isUserExist) {
+
+        uploadbulkimages(req, res, async function (err) {
+            const mfile = req.files || ""
+            console.log("-----", mfile)
+            if (mfile == "") {
+                return res.status(BADE_REQ_CODE).send({
+                    status: false,
+                    message: "Image Not Found",
+                })
+            }
+            // http://13.200.131.30:8080/uploads/
+            const filename = "http://13.200.131.30:8080/uploads/" + req.files[0].filename
+
+            console.log("uploading image", filename)
+
+            const mainuserdata = await userdata.findOneAndUpdate({ employee_number: userid }, {
+                $set: {
+                    employee_profile: filename
+                }
+            }, { returnOriginal: false })
+
+            res.status(RESPONSE_VALIDE_CODE).send({
+                status: true,
+                message: "success",
+                data: mainuserdata
+            })
+        })
+
+    } else {
+        res.status(BADE_REQ_CODE).send({
+            status: false,
+            message: "Incorrect UserID"
+        })
+    }
 
 });
 
@@ -46,6 +102,62 @@ router.get('/demo', async (req, res) => {
     })
 });
 
+router.post('/userlogin', async (req, res) => {
+    const userid = req.body.employee_number
+    const password = req.body.employee_passowrd
+
+    const isUserExist = await userdata.findOne({ employee_number: userid })
+
+
+    if (userid && password && isUserExist) {
+
+        if (isUserExist.employee_password == password && isUserExist.employee_number == userid) {
+            res.status(RESPONSE_VALIDE_CODE).send({
+                status: true,
+                message: "success",
+                data: isUserExist,
+            })
+        } else {
+            res.status(BADE_REQ_CODE).send({
+                status: false,
+                message: "Incorrect password"
+            })
+        }
+    }
+    else if (isUserExist == null) {
+        res.status(BADE_REQ_CODE).send({
+            status: false,
+            message: "Employee Id is not exist"
+        })
+    }
+    else {
+        res.status(BADE_REQ_CODE).send({
+            status: false,
+            message: "Incorrect password"
+        })
+    }
+});
+
+router.post('/userbiodata', async (req, res) => {
+    const userid = req.body.employee_number
+
+    const isUserExist = await biodata.findOne({ empno: userid })
+
+    if (userid && isUserExist) {
+        res.status(RESPONSE_VALIDE_CODE).send({
+            status: true,
+            message: "success",
+            data: isUserExist,
+        })
+    }
+    else {
+        res.status(BADE_REQ_CODE).send({
+            status: false,
+            message: "Employee Id is not exist"
+        })
+    }
+});
+
 router.post('/adduserdata', async (req, res) => {
     const userid = req.body.employee_number
     const password = req.body.employee_passowrd
@@ -53,6 +165,7 @@ router.post('/adduserdata', async (req, res) => {
     const maindata = {
         "employee_number": userid,
         "employee_password": password,
+        "employee_profile": "",
         "created_at": createddate
     }
 
@@ -94,24 +207,6 @@ router.post('/adduserdata', async (req, res) => {
             message: "Enter the right user id & password"
         })
     }
-    console.log(userdata, password)
-
-    // const mresult = await userdata.insertMany(inserteddata, (error, done) => {
-    //     if (error) {
-    //         res.status(BADE_REQ_CODE).send({
-    //             status: false,
-    //             message: "Duplicate value error",
-    //             error: error
-    //         })
-    //         console.log(error)
-    //     } else {
-    //         res.status(RESPONSE_VALIDE_CODE).send({
-    //             status: true,
-    //             message: "Data Insert successfully",
-    //             data: inserteddata
-    //         })
-    //     }
-
 });
 
 router.post('/addbiodata', async (req, res) => {

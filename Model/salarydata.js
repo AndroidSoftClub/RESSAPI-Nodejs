@@ -19,6 +19,9 @@ const root = mongoose.Schema({
   "DEPARTMENT": {
     "type": "String"
   },
+  "BILL_UNIT": {
+    "type": "String"
+  },
   "PAY_LEVEL": {
     "type": "String"
   },

@@ -578,10 +578,10 @@ router.post('/addsalarydata', async (req, res) => {
     const maindata = {
         "date": "10/11/2015",
         "empno": userid,
-        "name": req.body.name,
-        "designation": req.body.designation,
+        "name": req.body.NAME,
+        "designation": req.body.DESIGNATION,
         "department": req.body.department,
-        "billunit": req.body.billunit,
+        "billunit": req.body.BILL_UNIT,
         "paylevel": req.body.paylevel,
         "payrate": req.body.payrate,
         "basicpay": req.body.basicpay,

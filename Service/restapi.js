@@ -232,7 +232,7 @@ router.post('/addbiodata', async (req, res) => {
         "account_no": req.body.account_no
     }
 
-    console.log(isUserExist, userid, isBiodataExist, req.body.empno)
+    console.log(maindata)
 
     if (userid && isUserExist && isBiodataExist == null) {
 
@@ -264,6 +264,72 @@ router.post('/addbiodata', async (req, res) => {
             message: "Employee Id is not exist"
         })
     }
+    else {
+        res.status(BADE_REQ_CODE).send({
+            status: false,
+            message: "Enter the right user id "
+        })
+    }
+});
+
+router.post('/updatebiodata', async (req, res) => {
+    const userid = req.query.employee_number
+    const isUserExist = await userdata.findOne({ employee_number: userid })
+    const isBiodataExist = await biodata.findOne({ empno: userid })
+
+    const maindata = {
+        "empno": userid,
+        "name": req.body.name,
+        "father_husband": req.body.father_husband,
+        "dbo": req.body.dbo,
+        "mobile_no": req.body.mobile_no,
+        "email": req.body.email,
+        "aadhaar": req.body.aadhaar,
+        "pan": req.body.pan,
+        "hrmsid": req.body.hrmsid,
+        "au_rly": req.body.au_rly,
+        "bill_unit": req.body.bill_unit,
+        "designation": req.body.designation,
+        "department": req.body.department,
+        "doa": req.body.doa,
+        "doi": req.body.doi,
+        "dor": req.body.dor,
+        "emptype": req.body.emptype,
+        "servicestatus": req.body.servicestatus,
+        "station": req.body.station,
+        "payrate": req.body.payrate,
+        "level": req.body.level,
+        "bank": req.body.bank,
+        "ifsc_code": req.body.ifsc_code,
+        "account_no": req.body.account_no
+    }
+
+    console.log(maindata)
+
+    if (userid && isUserExist && isBiodataExist) {
+        const updateddata = await biodata.findOneAndUpdate({ empno: userid },
+            maindata
+            , { returnOriginal: false })
+            
+        res.status(RESPONSE_VALIDE_CODE).send({
+            status: true,
+            message: "data update successfully",
+            data: updateddata
+        })
+    }
+    else if (isUserExist == null) {
+        res.status(BADE_REQ_CODE).send({
+            status: false,
+            message: "Employee Id is not exist"
+        })
+    }
+    else if (isBiodataExist == null) {
+        res.status(BADE_REQ_CODE).send({
+            status: false,
+            message: "biodata is not exist"
+        })
+    }
+
     else {
         res.status(BADE_REQ_CODE).send({
             status: false,

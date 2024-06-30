@@ -1,91 +1,100 @@
 const mongoose = require("mongoose")
 
 const root = mongoose.Schema({
-  "date": {
-    "type": "Date"
-  },
-  "empno": {
+  "PDFURL": {
     "type": "String"
   },
-  "name": {
+  "DATE": {
     "type": "String"
   },
-  "designation": {
+  "EMPNO": {
     "type": "String"
   },
-  "department": {
+  "NAME": {
     "type": "String"
   },
-  "billunit": {
+  "DESIGNATION": {
     "type": "String"
   },
-  "paylevel": {
+  "DEPARTMENT": {
     "type": "String"
   },
-  "payrate": {
+  "PAY_LEVEL": {
     "type": "String"
   },
-  "basicpay": {
+  "PAYRATE": {
     "type": "String"
   },
-  "dearness_allowance": {
+  "BASIC_PAY": {
     "type": "String"
   },
-  "arrearsda": {
+  "DEARNESS_ALLOWANCE": {
     "type": "String"
   },
-  "house_rent_allowance": {
+  "ARREARS_DA1": {
     "type": "String"
   },
-  "transport_allowance": {
+  "ARREARS_DA2": {
     "type": "String"
   },
-  "arrears_of_transport_allowance": {
+  "ARREARS_DA3": {
     "type": "String"
   },
-  "children_education_allowance": {
+  "HOUSE_RENT_ALLOWANCE": {
     "type": "String"
   },
-  "national_holidays_allowance": {
+  "TRANSPORT_ALLOWANCE": {
     "type": "String"
   },
-  "rly_employees_insurance_scheme_c": {
+  "ARREARS_OF_TRANSPORT_ALLOWANCE1": {
     "type": "String"
   },
-  "new_pension_scheme_tier_i": {
+  "ARREARS_OF_TRANSPORT_ALLOWANCE2": {
     "type": "String"
   },
-  "income_tax": {
+  "CHILDREN_EDUCATION_ALLOWANCE": {
     "type": "String"
   },
-  "profession_tax_maharastra": {
+  "NATIONAL_HOLIDAYS_ALLOWANCE": {
     "type": "String"
   },
-  "karmachari_kalyan_kosh_ngp": {
+  "RLY_EMPLOYEES_INSURANCE_SCHEMEC": {
     "type": "String"
   },
-  "cmtd_ecc_abk_nagpur": {
+  "NEW_PENSION_SCHEME_TIERI": {
     "type": "String"
   },
-  "loan_ecc_bank_nagpur": {
+  "INCOME_TAX": {
     "type": "String"
   },
-  "pay_days": {
+  "PROFESSION_TAX_MAHARASTRA": {
     "type": "String"
   },
-  "gross": {
+  "KARMACHARI_KALYAN_KOSH_NGP": {
     "type": "String"
   },
-  "deduction": {
+  "CMTD_ECC_ABK_NAGPUR": {
     "type": "String"
   },
-  "netpay": {
+  "LOAN_ECC_BANK_NAGPUR": {
     "type": "String"
   },
-  "bank": {
+  "PAY_DAYS": {
     "type": "String"
   },
-  "account_no": {
+  "GROSS": {
+    "type": "String"
+  },
+  "DEDUCTION": {
+    "type": "String"
+  },
+  "NETPAY": {
+    "type": "String"
+  },
+  "BANK": {
+    "type": "String"
+  },
+  "ACCOUNT_NO": {
     "type": "String"
   }
 });

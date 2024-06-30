@@ -1,6 +1,9 @@
 const mongoose = require("mongoose")
 
 const root = mongoose.Schema({
+    "employee_name": {
+        "type": "String",
+    },
     "employee_number": {
         "type": "String",
         required: [true, "App id is required"],

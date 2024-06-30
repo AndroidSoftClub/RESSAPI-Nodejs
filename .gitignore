@@ -1,4 +1,6 @@
 node_modules/
+user_salary_pdf/
+user_profiles/
 dist/
 # Compiled Java class files
 *.class

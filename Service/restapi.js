@@ -69,11 +69,11 @@ router.post('/uploadsalarypdf', async (req, res) => {
     const salarydate = req.query.DATE
 
     const isUserExist = await userdata.findOne({ employee_number: userid })
-    const isSalarydataExist = await salarydata.findOne({ EMPNO: userid })
+    const isSalarydataExist = await salarydata.find({ EMPNO: userid, DATE: salarydate })
 
     console.log(isSalarydataExist)
 
-    if (salarydate && isUserExist && isSalarydataExist == null) {
+    if (salarydate && isUserExist && isSalarydataExist.length == 0) {
 
         uploadpdffile(req, res, async function (err) {
             const mfile = req.files || ""
@@ -150,75 +150,82 @@ router.post('/uploadsalarypdf', async (req, res) => {
 
         console.log("----", isSalarydataExist.DATE, req.query.DATE, (isSalarydataExist.DATE != req.query.DATE));
 
-        if (isSalarydataExist.DATE != req.query.DATE) {
-            uploadpdffile(req, res, async function (err) {
-                const mfile = req.files || ""
-                if (mfile == "") {
-                    return res.status(BADE_REQ_CODE).send({
-                        status: false,
-                        message: "PDF Not Found",
-                    })
-                }
-
-                // http://13.200.131.30:8080/user_salary_pdf/
-                const filename = "http://13.200.131.30:8080/user_salary_pdf/" + req.files[0].filename
-
-                const salarydatamain =
-                {
-                    "PDFURL": filename,
-                    "DATE": req.query.DATE,
-                    "EMPNO": userid,
-                    "NAME": req.body.NAME,
-                    "DESIGNATION": req.body.DESIGNATION,
-                    "DEPARTMENT": req.body.DEPARTMENT,
-                    "PAY_LEVEL": req.body.PAY_LEVEL,
-                    "PAYRATE": req.body.PAYRATE,
-                    "BASIC_PAY": req.body.BASIC_PAY,
-                    "DEARNESS_ALLOWANCE": req.body.DEARNESS_ALLOWANCE,
-                    "ARREARS_DA1": req.body.ARREARS_DA1,
-                    "ARREARS_DA2": req.body.ARREARS_DA2,
-                    "ARREARS_DA3": req.body.ARREARS_DA3,
-                    "HOUSE_RENT_ALLOWANCE": req.body.HOUSE_RENT_ALLOWANCE,
-                    "TRANSPORT_ALLOWANCE": req.body.TRANSPORT_ALLOWANCE,
-                    "ARREARS_OF_TRANSPORT_ALLOWANCE1": req.body.ARREARS_OF_TRANSPORT_ALLOWANCE1,
-                    "ARREARS_OF_TRANSPORT_ALLOWANCE2": req.body.ARREARS_OF_TRANSPORT_ALLOWANCE2,
-                    "CHILDREN_EDUCATION_ALLOWANCE": req.body.CHILDREN_EDUCATION_ALLOWANCE,
-                    "NATIONAL_HOLIDAYS_ALLOWANCE": req.body.NATIONAL_HOLIDAYS_ALLOWANCE,
-                    "RLY_EMPLOYEES_INSURANCE_SCHEMEC": req.body.RLY_EMPLOYEES_INSURANCE_SCHEMEC,
-                    "NEW_PENSION_SCHEME_TIERI": req.body.NEW_PENSION_SCHEME_TIERI,
-                    "INCOME_TAX": req.body.INCOME_TAX,
-                    "PROFESSION_TAX_MAHARASTRA": req.body.PROFESSION_TAX_MAHARASTRA,
-                    "KARMACHARI_KALYAN_KOSH_NGP": req.body.KARMACHARI_KALYAN_KOSH_NGP,
-                    "CMTD_ECC_ABK_NAGPUR": req.body.CMTD_ECC_ABK_NAGPUR,
-                    "LOAN_ECC_BANK_NAGPUR": req.body.LOAN_ECC_BANK_NAGPUR,
-                    "PAY_DAYS": req.body.PAY_DAYS,
-                    "GROSS": req.body.GROSS,
-                    "DEDUCTION": req.body.DEDUCTION,
-                    "NETPAY": req.body.NETPAY,
-                    "BANK": req.body.BANK,
-                    "ACCOUNT_NO": req.body.ACCOUNT_NO
-                }
-
-
-                await salarydata.insertMany(salarydatamain)
-                    .then(function (data) {
-                        res.status(RESPONSE_VALIDE_CODE).send({
-                            status: true,
-                            message: "Data Inser Successfully",
-                            data: salarydatamain,
-                        })
-                    })
-                    .catch(function (err) {
-                        res.status(BADE_REQ_CODE).send({
+        try {
+            if (isSalarydataExist[0].DATE != req.query.DATE) {
+                uploadpdffile(req, res, async function (err) {
+                    const mfile = req.files || ""
+                    if (mfile == "") {
+                        return res.status(BADE_REQ_CODE).send({
                             status: false,
-                            message: err
+                            message: "PDF Not Found",
                         })
-                    });
-            })
-        } else {
+                    }
+
+                    // http://13.200.131.30:8080/user_salary_pdf/
+                    const filename = "http://13.200.131.30:8080/user_salary_pdf/" + req.files[0].filename
+
+                    const salarydatamain =
+                    {
+                        "PDFURL": filename,
+                        "DATE": req.query.DATE,
+                        "EMPNO": userid,
+                        "NAME": req.body.NAME,
+                        "DESIGNATION": req.body.DESIGNATION,
+                        "DEPARTMENT": req.body.DEPARTMENT,
+                        "PAY_LEVEL": req.body.PAY_LEVEL,
+                        "PAYRATE": req.body.PAYRATE,
+                        "BASIC_PAY": req.body.BASIC_PAY,
+                        "DEARNESS_ALLOWANCE": req.body.DEARNESS_ALLOWANCE,
+                        "ARREARS_DA1": req.body.ARREARS_DA1,
+                        "ARREARS_DA2": req.body.ARREARS_DA2,
+                        "ARREARS_DA3": req.body.ARREARS_DA3,
+                        "HOUSE_RENT_ALLOWANCE": req.body.HOUSE_RENT_ALLOWANCE,
+                        "TRANSPORT_ALLOWANCE": req.body.TRANSPORT_ALLOWANCE,
+                        "ARREARS_OF_TRANSPORT_ALLOWANCE1": req.body.ARREARS_OF_TRANSPORT_ALLOWANCE1,
+                        "ARREARS_OF_TRANSPORT_ALLOWANCE2": req.body.ARREARS_OF_TRANSPORT_ALLOWANCE2,
+                        "CHILDREN_EDUCATION_ALLOWANCE": req.body.CHILDREN_EDUCATION_ALLOWANCE,
+                        "NATIONAL_HOLIDAYS_ALLOWANCE": req.body.NATIONAL_HOLIDAYS_ALLOWANCE,
+                        "RLY_EMPLOYEES_INSURANCE_SCHEMEC": req.body.RLY_EMPLOYEES_INSURANCE_SCHEMEC,
+                        "NEW_PENSION_SCHEME_TIERI": req.body.NEW_PENSION_SCHEME_TIERI,
+                        "INCOME_TAX": req.body.INCOME_TAX,
+                        "PROFESSION_TAX_MAHARASTRA": req.body.PROFESSION_TAX_MAHARASTRA,
+                        "KARMACHARI_KALYAN_KOSH_NGP": req.body.KARMACHARI_KALYAN_KOSH_NGP,
+                        "CMTD_ECC_ABK_NAGPUR": req.body.CMTD_ECC_ABK_NAGPUR,
+                        "LOAN_ECC_BANK_NAGPUR": req.body.LOAN_ECC_BANK_NAGPUR,
+                        "PAY_DAYS": req.body.PAY_DAYS,
+                        "GROSS": req.body.GROSS,
+                        "DEDUCTION": req.body.DEDUCTION,
+                        "NETPAY": req.body.NETPAY,
+                        "BANK": req.body.BANK,
+                        "ACCOUNT_NO": req.body.ACCOUNT_NO
+                    }
+
+
+                    await salarydata.insertMany(salarydatamain)
+                        .then(function (data) {
+                            res.status(RESPONSE_VALIDE_CODE).send({
+                                status: true,
+                                message: "Data Inser Successfully",
+                                data: salarydatamain,
+                            })
+                        })
+                        .catch(function (err) {
+                            res.status(BADE_REQ_CODE).send({
+                                status: false,
+                                message: err
+                            })
+                        });
+                })
+            } else {
+                res.status(BADE_REQ_CODE).send({
+                    status: false,
+                    message: "User Id: " + userid + " Date: " + salarydate + " = This Date Sallery & pdf data is already exist"
+                })
+            }
+        } catch (e) {
             res.status(BADE_REQ_CODE).send({
                 status: false,
-                message: "User Id: " + userid + " Date: " + salarydate + " = This Date Sallery & pdf data is already exist"
+                message: "Incorrect UserID"
             })
         }
     }
@@ -343,31 +350,44 @@ router.post('/salarydata', async (req, res) => {
     const userid = req.body.employee_number
     const dateuser = req.body.DATE
 
-    const isUserExist = await biodata.findOne({ empno: userid })
-    const isSalaryExist = await salarydata.findOne({ EMPNO: userid })
+    const isUserExist = await userdata.findOne({ employee_number: userid })
+    const isSalaryExist = await salarydata.find({ EMPNO: userid, DATE: dateuser })
 
     console.log(isSalaryExist)
 
     if (userid && isSalaryExist && isUserExist) {
+        try {
+            if (isSalaryExist[0].DATE == dateuser) {
+                res.status(RESPONSE_VALIDE_CODE).send({
+                    status: true,
+                    message: "success",
+                    data: isSalaryExist[0],
+                })
+            }
+            else {
+                res.status(RESPONSE_VALIDE_CODE).send({
+                    status: false,
+                    message: "Not a valid date"
+                })
+            }
 
-        if (isSalaryExist.DATE == dateuser) {
-            res.status(RESPONSE_VALIDE_CODE).send({
-                status: true,
-                message: "success",
-                data: isSalaryExist,
-            })
-        }
-        else {
+        } catch (e) {
             res.status(RESPONSE_VALIDE_CODE).send({
                 status: false,
                 message: "Not a valid date"
             })
-        }
+        };
     }
     else if (userid == null) {
         res.status(BADE_REQ_CODE).send({
             status: false,
             message: "Employee Id is not exist"
+        })
+    }
+    else if (isUserExist == null) {
+        res.status(BADE_REQ_CODE).send({
+            status: false,
+            message: "User Id is not exist"
         })
     }
     else {
@@ -376,7 +396,6 @@ router.post('/salarydata', async (req, res) => {
             message: "Salary data is not exists"
         })
     }
-
 });
 
 router.post('/adduserdata', async (req, res) => {
@@ -627,7 +646,6 @@ router.post('/addsalarydata', async (req, res) => {
                     message: err
                 })
             });
-
     }
     else if (isUserExist == null) {
         res.status(BADE_REQ_CODE).send({
